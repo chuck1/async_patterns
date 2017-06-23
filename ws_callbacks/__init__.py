@@ -1,3 +1,5 @@
+__version__ = '0.2a0'
+
 import asyncio
 
 class Callbacks(object):

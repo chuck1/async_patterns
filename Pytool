@@ -1,0 +1,13 @@
+name = 'ws_callbacks'
+description = 'pattern for registering callbacks'
+url = 'http://github.com/chuck1/ws-callbacks'
+author = 'Charles Rymal'
+author_email = 'charlesrymal@gmail.com'
+license = 'MIT'
+
+packages = [
+	'ws_callbacks',
+	'ws_callbacks.tests'
+]
+
+

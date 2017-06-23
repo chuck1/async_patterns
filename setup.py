@@ -1,18 +1,10 @@
-
+import os
 from setuptools import setup
 
-version = open('VERSION.txt').read()
+import pkgtool
 
-setup(name='ws_callbacks',
-        version=version,
-        description='pattern for registering callbacks',
-        url='http://github.com/chuck1/web_sheets',
-        author='Charles Rymal',
-        author_email='charlesrymal@gmail.com',
-        license='MIT',
-        packages=(
-            'ws_callbacks',
-            'ws_callbacks.tests'),
-        zip_safe=False,
-        )
+pkg = pkgtool.Package(os.getcwd())
+
+setup(**pkg.setup_args())
+
 
