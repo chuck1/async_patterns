@@ -2,5 +2,4 @@ dist/
 build/
 _build/
 *.pyc
-requirements.txt
 *.egg-info/
