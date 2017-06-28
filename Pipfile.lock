@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "8861b7ac4e1afe5dc0e457a12ad264ed3655dec24eb904e800059a0c2629a766"
+            "sha256": "0e6baee8585a591630e0afc47307e4b989295d0661603355ca30a561779c633c"
         },
         "requires": {},
         "sources": [
@@ -13,6 +13,7 @@
     },
     "default": {},
     "develop": {
+        "-e .": "*",
         "termcolor": {
             "version": "==1.1.0"
         },
