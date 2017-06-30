@@ -1,5 +1,5 @@
 
-from ws_callbacks import Callbacks
+from async_patterns import Callbacks
 
 def test_call():
     cb = Callbacks()
