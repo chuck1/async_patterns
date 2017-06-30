@@ -3,7 +3,7 @@ url = "https://pypi.python.org/simple"
 verify_ssl = true
 
 [packages]
-pkgtool = "==0.1b45"
+pkgtool = "==0.1b52"
 
 [dev-packages]
 termcolor = "*"
