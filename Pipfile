@@ -2,11 +2,11 @@
 url = "https://pypi.python.org/simple"
 verify_ssl = true
 
-[packages]
-pkgtool = "==0.1b53"
-
 [dev-packages]
 termcolor = "*"
 toml = "*"
 "-e ." = "*"
 Sphinx = "*"
+
+[packages]
+pkgtool = "==0.1b53"
