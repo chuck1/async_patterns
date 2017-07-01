@@ -5,6 +5,7 @@ python:
 
 install:
 - pip3 install -r requirements.txt
+- pip3 install toml
 - pip3 install -e .
 - pip install pytest-cov
 - pip install codecov
