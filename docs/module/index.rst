@@ -1,6 +1,6 @@
 Reference
 =========
 
-.. automodule:: ws_callbacks
+.. automodule:: async_patterns
    :members:
 
