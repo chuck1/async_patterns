@@ -1,17 +1,21 @@
 import os
 import re
 from setuptools import setup
-import toml
+import json
+from pprint import pprint
 
-with open('Pytool') as f:
-    c = toml.loads(f.read())
+with open('Setup.lock') as f:
+    c = json.loads(f.read())
 
 with open(os.path.join(c['name'], '__init__.py')) as f:
     version = re.findall("^__version__ = '(.*)'", f.read())[0]
 
-with open('requirements.txt') as f:
-    install_requires=[l.strip() for l in f.readlines()]
-    
+with open('Pipfile.lock') as f:
+    p = json.loads(f.read())
+    install_requires=[k + v['version'] for k, v in p['default'].items()]
+
+pprint(install_requires)
+
 kwargs = {
         'name': c['name'],
         'version': version,

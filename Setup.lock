@@ -1,0 +1,12 @@
+{
+    "name": "async_patterns",
+    "author_email": "charlesrymal@gmail.com",
+    "url": "http://github.com/chuck1/ws-callbacks",
+    "license": "MIT",
+    "author": "Charles Rymal",
+    "description": "pattern for registering callbacks",
+    "packages": [
+        "async_patterns",
+        "async_patterns.tests"
+    ]
+}
