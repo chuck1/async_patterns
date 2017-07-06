@@ -1,4 +1,6 @@
 __version__ = '0.3b2'
 
-__all__ = ['callbacks', 'coro_queue', 'protocol']
+from .callbacks import *
+
+__all__ = [callbacks.__all__, 'coro_queue', 'protocol']
 

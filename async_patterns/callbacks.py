@@ -1,5 +1,7 @@
 import asyncio
 
+__all__ = ['Callbacks']
+
 class Callbacks:
     """
     Accepts callables objects and stores them in a list, then calls them all
