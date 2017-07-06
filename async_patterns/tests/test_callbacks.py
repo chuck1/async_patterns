@@ -4,7 +4,7 @@ import pytest
 
 from async_patterns import Callbacks
 
-@pytest.fixture
+@pytest.fixture(scope='module')
 def loop():
     return asyncio.get_event_loop()
 
