@@ -1,7 +1,4 @@
 import asyncio
-import logging
-
-logger = logging.getLogger(__name__)
 
 class CoroQueue(object):
     """
@@ -15,8 +12,6 @@ class CoroQueue(object):
         """
         Schedule asyncio to run the consumer loop.
         """
-        logger.debug('schedule_run_forever')
-        
         self.__task_run_forever = self.loop.create_task(self.run_forever())
 
     async def run_forever(self):
@@ -24,25 +19,15 @@ class CoroQueue(object):
         The consumer loop.
         Loop forever getting the next coroutine in the queue and awaiting it.
         """
-        logger.debug('run_forever')
 
         while True:
-            #coro, future = await self.__coro_queue.get()
-            item = await self.__queue.get()
-            #logger.debug('Book coro queue get {}'.format((coro, future)))
-            logger.debug('Book coro queue get {}'.format(item))
-            coro, future = item
-            logger.debug('  coro={}'.format(coro))
-            logger.debug('  future={}'.format(future))
-            logger.debug('  waiting')
+            coro, future = await self.__queue.get()
+
             try:
                 res = await coro
             except Exception as e:
-                logger.error('encountered error while running coro')
-                logger.error(repr(e))
                 res = e
 
-            logger.debug('  result = {}'.format(res))
             future.set_result(res)
  
     def put_nowait(self, f, *args):
@@ -52,7 +37,6 @@ class CoroQueue(object):
         :param f: a coroutine function
         :param args: arguments to be passed to the coroutine
         """
-        logger.debug('put f={} args={}'.format(f, args))
 
         future = self.loop.create_future()
         coro = f(*args)
@@ -62,7 +46,6 @@ class CoroQueue(object):
         
         self.__queue.put_nowait((coro, future))
 
-        logger.debug('coro={}'.format(coro))
         
         return future
 
@@ -70,28 +53,27 @@ class CoroQueue(object):
         """
         Cancel all pending coroutines.
         """
-        logger.debug('CoroQueue close size={}'.format(self.__queue.qsize()))
 
         self.__task_run_forever.cancel()
 
         while not self.__queue.empty():
             item = self.__queue.get_nowait()
             coro, future = item
-            logger.debug('  coro: {}'.format(repr(coro)))
             
             task = self.loop.create_task(coro)
 
             ret = task.cancel()
 
-            logger.debug('  cancel task: {}'.format(ret))
-
             continue
 
             res = await task
 
-            logger.debug('  cancelled task: {}'.format(res))
-
-
+    async def join(self):
+        """
+        Wait for all coroutines to finish.
+        Await the underlying :py:class:`asyncio.Queue` object's join method.
+        """
+        await self.__queue.join()
 
 
 
