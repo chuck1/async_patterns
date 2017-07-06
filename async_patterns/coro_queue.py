@@ -45,7 +45,7 @@ class CoroQueue(object):
             except concurrent.futures.CancelledError as e:
                 break
 
-    def put_nowait(self, f, *args):
+    def put_nowait(self, f, *args, **kwargs):
         """
         Put a coroutine onto the queue.
 
@@ -54,7 +54,7 @@ class CoroQueue(object):
         """
 
         future = self.loop.create_future()
-        coro = f(*args)
+        coro = f(*args, **kwargs)
         
         if not asyncio.iscoroutine(coro):
             raise RuntimeError('{} is not a coroutine'.format(f))
