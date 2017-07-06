@@ -4,16 +4,26 @@ import logging
 logger = logging.getLogger(__name__)
 
 class CoroQueue(object):
+    """
+    A queue of coroutines to be called sequentially.
+    """
     def __init__(self, loop):
         self.loop = loop
         self.__queue = asyncio.Queue()
 
     def schedule_run_forever(self):
+        """
+        Schedule asyncio to run the consumer loop.
+        """
         logger.debug('schedule_run_forever')
         
         self.__task_run_forever = self.loop.create_task(self.run_forever())
 
     async def run_forever(self):
+        """
+        The consumer loop.
+        Loop forever getting the next coroutine in the queue and awaiting it.
+        """
         logger.debug('run_forever')
 
         while True:
@@ -36,6 +46,12 @@ class CoroQueue(object):
             future.set_result(res)
  
     def put_nowait(self, f, *args):
+        """
+        Put a coroutine onto the queue.
+
+        :param f: a coroutine function
+        :param args: arguments to be passed to the coroutine
+        """
         logger.debug('put f={} args={}'.format(f, args))
 
         future = self.loop.create_future()
@@ -50,14 +66,13 @@ class CoroQueue(object):
         
         return future
 
-    async def cancel(self):
-
-        self.__task_run_forever.cancel()
-
     async def close(self):
+        """
+        Cancel all pending coroutines.
+        """
         logger.debug('CoroQueue close size={}'.format(self.__queue.qsize()))
 
-        await self.cancel()
+        self.__task_run_forever.cancel()
 
         while not self.__queue.empty():
             item = self.__queue.get_nowait()
