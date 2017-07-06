@@ -1,4 +1,5 @@
 import asyncio
+import concurrent
 
 class CoroQueue(object):
     """
@@ -7,29 +8,43 @@ class CoroQueue(object):
     def __init__(self, loop):
         self.loop = loop
         self.__queue = asyncio.Queue()
+        self.__waiter = None
+        self.__cancelled = False
 
     def schedule_run_forever(self):
         """
         Schedule asyncio to run the consumer loop.
         """
-        self.__task_run_forever = self.loop.create_task(self.run_forever())
+        self.__task_run_forever = self.loop.create_task(self.__run_forever())
 
-    async def run_forever(self):
+    async def __run_one(self):
+        coro, future = await self.__queue.get()
+
+        try:
+            res = await coro
+        except Exception as e:
+            future.set_exception(e)
+        else:
+            future.set_result(res)
+
+    async def __run_forever(self):
         """
         The consumer loop.
         Loop forever getting the next coroutine in the queue and awaiting it.
         """
-
         while True:
-            coro, future = await self.__queue.get()
+            if self.__waiter:
+                if self.__queue.empty():
+                    self.__waiter.set_result(None)
+            
+            if self.__cancelled:
+                break
 
             try:
-                res = await coro
-            except Exception as e:
-                res = e
+                await self.__run_one()
+            except concurrent.futures.CancelledError as e:
+                break
 
-            future.set_result(res)
- 
     def put_nowait(self, f, *args):
         """
         Put a coroutine onto the queue.
@@ -46,7 +61,6 @@ class CoroQueue(object):
         
         self.__queue.put_nowait((coro, future))
 
-        
         return future
 
     async def close(self):
@@ -55,7 +69,8 @@ class CoroQueue(object):
         """
 
         self.__task_run_forever.cancel()
-
+        await self.__task_run_forever
+        
         while not self.__queue.empty():
             item = self.__queue.get_nowait()
             coro, future = item
@@ -73,7 +88,14 @@ class CoroQueue(object):
         Wait for all coroutines to finish.
         Await the underlying :py:class:`asyncio.Queue` object's join method.
         """
-        await self.__queue.join()
+        if self.__queue.empty():
+            return
+        
+        assert self.__waiter is None
+        self.__waiter = self.loop.create_future()
+        await self.__waiter
+        self.__waiter = None
+
 
 
 
