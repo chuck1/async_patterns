@@ -7,6 +7,9 @@ async_patterns
    :target: https://codecov.io/gh/chuck1/async_patterns
 .. image:: https://img.shields.io/pypi/v/async_patterns.svg
     :target: https://pypi.python.org/pypi/async_patterns
+.. image:: https://readthedocs.org/projects/async_patterns/badge/?version=dev
+   :target: http://async_patterns.readthedocs.io/en/dev/?badge=dev
+   :alt: Documentation Status
 
 Useful python patterns using async.
 
