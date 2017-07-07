@@ -6,3 +6,4 @@ verify_ssl = true
 "-e ." = "*"
 Sphinx = "*"
 pytest-cov = "*"
+codecov = "*"
