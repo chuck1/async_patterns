@@ -40,12 +40,16 @@ class ClientProtocol(async_patterns.protocol.Protocol):
 
 async def atest(loop):
     server = await loop.create_server(functools.partial(ServerProtocol, loop), port=0)
-    port = server.sockets[0].getsockname()[1]
+    addr = server.sockets[0].getsockname()
+    host = addr[0]
+    port = addr[1]
     
+    print()
+    print('serving on', addr)
     print('wait for server start')
-    await asyncio.sleep(10)
+    await asyncio.sleep(1)
     
-    _, client = await loop.create_connection(functools.partial(ClientProtocol, loop), 'localhost', port)
+    _, client = await loop.create_connection(functools.partial(ClientProtocol, loop), host, port)
     
     resp = await client.write(To())
 
