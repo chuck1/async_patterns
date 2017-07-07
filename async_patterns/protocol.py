@@ -12,7 +12,7 @@ class Protocol(asyncio.Protocol):
         self.__message_id_last = 0
         self.__message_futures = {}
         self.queue_packet_acall = asyncio.Queue()
-
+        
     def __next_message_id(self):
         self.__message_id_last += 1
         return self.__message_id_last
@@ -81,7 +81,11 @@ class Protocol(asyncio.Protocol):
 
     def write(self, packet):
         """
-        assign a message_id 
+        Write an object to the socket.
+        Assign the object a ``message_id`` before sending.
+
+        :param packet: object to pickle and send
+        :rtype: future
         """
         packet.message_id = self.__next_message_id()
         b = pickle.dumps(packet)
@@ -94,6 +98,9 @@ class Protocol(asyncio.Protocol):
         return fut
 
     async def close(self):
+        """
+        This method is a :ref:`coroutine <coroutine>`.
+        """
         logger.debug('cancel packet acall')
         while not self.queue_packet_acall.empty():
             task = self.queue_packet_acall.get_nowait()

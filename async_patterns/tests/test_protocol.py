@@ -20,6 +20,8 @@ async def atest(loop):
 
     _, client = await loop.create_connection(functools.partial(ClientProtocol, loop), 'localhost', port)
     
+    client.write(Packet)
+
     server.close()
     await server.wait_closed()
 
