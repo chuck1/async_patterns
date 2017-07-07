@@ -1,4 +1,4 @@
-__version__ = '0.3b2'
+__version__ = '0.3b3'
 
 from .callbacks import *
 
