@@ -100,29 +100,35 @@ class CoroQueueClass:
     Provide a method wrapper that schedules execution of the wrapped
     function using a :py:class:`CoroQueue` object.
 
-    .. testsetup::
+    .. testsetup:: *
         
         import asyncio
         loop = asyncio.get_event_loop()
+        from async_patterns.coro_queue import CoroQueueClass
 
     .. testcode::
+
         class Foo(CoroQueueClass):
             @CoroQueueClass.wrap
-            async def a():
+            async def a(self):
                 await asyncio.sleep(1)
         
-        async def test():
+        async def test(loop):
             f = Foo()
+            f._loop = loop
             await f.a()
+            await f.close()
         
-        loop.run_until_complete(test())
+        loop.run_until_complete(test(loop))
 
     """
 
     _coro_queue = None
+    _loop = None
 
-    def __init__(self, queue=None):
+    def __init__(self, queue=None, loop=None):
         self._coro_queue = queue
+        self._loop = loop
 
     @classmethod
     def wrap(cls, f):
@@ -137,8 +143,10 @@ class CoroQueueClass:
             self._coro_queue = CoroQueue(self._loop)
             self._coro_queue.schedule_run_forever()
         return self._coro_queue
-
-
+    
+    async def close(self):
+        await self.coro_queue.close()
+    
 
 
 

@@ -23,7 +23,7 @@ async def atest(loop):
 
     await foo.a()
     await foo.b(0)
-    await foo.c(0, d=1)
+    await foo.c(0, c2=1)
     
     await foo.coro_queue.join()
 

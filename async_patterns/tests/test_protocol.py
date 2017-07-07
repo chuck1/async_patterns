@@ -43,7 +43,7 @@ async def atest(loop):
     port = server.sockets[0].getsockname()[1]
     
     print('wait for server start')
-    await asyncio.sleep(4)
+    await asyncio.sleep(10)
     
     _, client = await loop.create_connection(functools.partial(ClientProtocol, loop), 'localhost', port)
     
