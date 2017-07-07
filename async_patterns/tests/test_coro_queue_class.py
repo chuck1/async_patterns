@@ -21,9 +21,9 @@ async def atest(loop):
     foo = Foo()
     foo._loop = loop
 
-    foo.a()
-    foo.b(0)
-    foo.c(0, d=1)
+    await foo.a()
+    await foo.b(0)
+    await foo.c(0, d=1)
     
     await foo.coro_queue.join()
 

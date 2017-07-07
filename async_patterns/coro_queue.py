@@ -94,12 +94,36 @@ class CoroQueue(object):
         self.__waiter = None
 
 class CoroQueueClass:
+    """
+    Provide a method wrapper that schedules execution of the wrapped
+    function using a :py:class:`CoroQueue` object.
+
+    .. testsetup::
+        
+        import asyncio
+        loop = asyncio.get_event_loop()
+
+    .. testcode::
+        class Foo(CoroQueueClass):
+            @CoroQueueClass.wrap
+            async def a():
+                await asyncio.sleep(1)
+        
+        async def test():
+            f = Foo()
+            await f.a()
+        
+        loop.run_until_complete(test())
+
+    """
+    
     _coro_queue = None
 
     @classmethod
     def wrap(cls, f):
-        def wrapped(self, *args, **kwargs):
-            return self.coro_queue.put_nowait(f, *args, **kwargs)
+        async def wrapped(self, *args, **kwargs):
+            future = self.coro_queue.put_nowait(f, *args, **kwargs)
+            return (await future)
         return wrapped
 
     @property

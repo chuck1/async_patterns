@@ -1,4 +1,5 @@
 import asyncio
+import concurrent.futures
 import logging
 import pickle
 import io
@@ -42,8 +43,9 @@ class Protocol(asyncio.Protocol):
     async def async_packet_received(self, packet):
         try:
             res = await packet(self)
+        except concurrent.futures.CancelledError as e:
+            logger.exception('packet call cancelled. packet={} {}'.format(repr(packet), e))
         except Exception as e:
-            logger.error('error during packet call. {}'.format(e))
             logger.exception('error during packet call. {}'.format(e))
         else:
             logger.info('packet call returned {}'.format(repr(res)))
