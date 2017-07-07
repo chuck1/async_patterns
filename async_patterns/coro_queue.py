@@ -1,6 +1,8 @@
 import asyncio
 import concurrent
 
+__all__ = ['CoroQueue', 'CoroQueueClass']
+
 class CoroQueue(object):
     """
     A queue of coroutines to be called sequentially.
@@ -116,13 +118,16 @@ class CoroQueueClass:
         loop.run_until_complete(test())
 
     """
-    
+
     _coro_queue = None
+
+    def __init__(self, queue=None):
+        self._coro_queue = queue
 
     @classmethod
     def wrap(cls, f):
         async def wrapped(self, *args, **kwargs):
-            future = self.coro_queue.put_nowait(f, *args, **kwargs)
+            future = self.coro_queue.put_nowait(f, self, *args, **kwargs)
             return (await future)
         return wrapped
 

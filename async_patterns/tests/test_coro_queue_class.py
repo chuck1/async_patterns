@@ -5,15 +5,15 @@ from async_patterns.coro_queue import *
 
 class Foo(CoroQueueClass):
     @CoroQueueClass.wrap
-    async def a():
+    async def a(self):
         await asyncio.sleep(1)
 
     @CoroQueueClass.wrap
-    async def b(*args):
+    async def b(self, b1):
         await asyncio.sleep(1)
 
     @CoroQueueClass.wrap
-    async def c(*args, **kwargs):
+    async def c(self, c1, c2=0):
         await asyncio.sleep(1)
 
 async def atest(loop):
