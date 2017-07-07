@@ -32,24 +32,12 @@ class Protocol(asyncio.Protocol):
         
         l = len(data)
 
-        try:
-            stream = io.BytesIO(data)
+        stream = io.BytesIO(data)
             
-            while stream.tell() < l:
-                logger.debug('{} bytes in stream. at position {}.'.format(len(stream.getbuffer()), stream.tell()))
-                try:
-                    packet = pickle.load(stream)
-                except EOFError as e:
-                    logger.debug(repr(e))
-                    break
-                except Exception as e:
-                    logger.error(e)
-                    raise
-            
-        
-                self.__packet_received(packet)
-        except Exception as e:
-            logger.error(str(e))
+        while stream.tell() < l:
+            logger.debug('{} bytes in stream. at position {}.'.format(len(stream.getbuffer()), stream.tell()))
+            packet = pickle.load(stream)
+            self.__packet_received(packet)
     
     async def async_packet_received(self, packet):
         try:
@@ -70,12 +58,8 @@ class Protocol(asyncio.Protocol):
         self.queue_packet_acall.put_nowait(task)
 
         if hasattr(packet, 'response_to'):
-            try:
-                future = self.__message_futures[packet.response_to]
-            except Exception as e:
-                logger.error(e)
-            else:
-                future.set_result(packet)
+            future = self.__message_futures[packet.response_to]
+            future.set_result(packet)
 
         return task
 

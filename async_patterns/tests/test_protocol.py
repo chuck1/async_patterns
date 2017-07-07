@@ -3,8 +3,26 @@ import functools
 
 import async_patterns.protocol
 
-class Packet:
-    pass
+class To:
+    async def __call__(self, proto):
+        print(self.__class__)
+        f = From()
+        f.response_to = self.message_id
+        proto.write(f)
+
+class ToError:
+    async def __call__(self, proto):
+        print(self.__class__)
+        raise Exception(self.__class__)
+
+class ToSlow:
+    async def __call__(self, proto):
+        print(self.__class__)
+        await asyncio.sleep(100)
+
+class From:
+    async def __call__(self, _):
+        print(self.__class__)
 
 sp = None
 
@@ -29,8 +47,17 @@ async def atest(loop):
     
     _, client = await loop.create_connection(functools.partial(ClientProtocol, loop), 'localhost', port)
     
-    client.write(Packet)
+    resp = await client.write(To())
+
+    print('resp =', resp)
+
+    client.write(ToError())
+    client.write(ToSlow())
     
+    await asyncio.sleep(1)
+    
+    print(sp.queue_packet_acall)
+
     await sp.close()
 
     server.close()
