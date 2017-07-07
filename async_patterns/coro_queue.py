@@ -37,13 +37,7 @@ class CoroQueue(object):
                 if self.__queue.empty():
                     self.__waiter.set_result(None)
             
-            if self.__cancelled:
-                break
-
-            try:
-                await self.__run_one()
-            except concurrent.futures.CancelledError as e:
-                break
+            await self.__run_one()
 
     def put_nowait(self, f, *args, **kwargs):
         """
@@ -67,9 +61,11 @@ class CoroQueue(object):
         """
         Cancel all pending coroutines.
         """
-
+        self.__cancelled = True
         self.__task_run_forever.cancel()
-        await self.__task_run_forever
+        try:
+            await self.__task_run_forever
+        except concurrent.futures.CancelledError as e: pass
         
         while not self.__queue.empty():
             item = self.__queue.get_nowait()
@@ -78,10 +74,11 @@ class CoroQueue(object):
             task = self.loop.create_task(coro)
 
             ret = task.cancel()
-
-            continue
-
-            res = await task
+            
+            try:
+                res = await task
+            except concurrent.futures.CancelledError as e:
+                pass
 
     async def join(self):
         """
