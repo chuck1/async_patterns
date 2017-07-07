@@ -96,6 +96,24 @@ class CoroQueue(object):
         await self.__waiter
         self.__waiter = None
 
+class CoroQueueClass:
+    _coro_queue = None
+
+    @classmethod
+    def wrap(cls, f):
+        def wrapped(self, *args, **kwargs):
+            return self.coro_queue.put_nowait(f, *args, **kwargs)
+        return wrapped
+
+    @property
+    def coro_queue(self):
+        if self._coro_queue is None:
+            self._coro_queue = CoroQueue(self._loop)
+            self._coro_queue.schedule_run_forever()
+        return self._coro_queue
+
+
+
 
 
 
