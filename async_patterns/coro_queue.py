@@ -29,8 +29,9 @@ class CoroQueue(object):
         coro, future = await self.__queue.get()
         
         if future.cancelled():
-            raise Exception('future cancelled coro={} loop_running={}'.format(
-                coro, loop.is_running()))
+            raise concurrent.futures.CancelledError()
+            #raise Exception('future cancelled coro={} loop_running={}'.format(
+            #    coro, loop.is_running()))
 
         try:
             res = await coro
