@@ -88,6 +88,10 @@ class Protocol(asyncio.Protocol):
         """
         This method is a :ref:`coroutine <coroutine>`.
         """
+
+        logger.info('close transport')
+        self.transport.close()
+
         logger.debug('cancel packet acall')
         while not self.queue_packet_acall.empty():
             task = self.queue_packet_acall.get_nowait()
