@@ -57,7 +57,8 @@ class CoroQueue(object):
         Loop forever getting the next coroutine in the queue and awaiting it.
         """
         while True:
-            assert not self._cancelled
+            if self._cancelled:
+                raise concurrent.futures.CancelledError()
 
             if self.__waiter:
                 if self.__queue.empty():
