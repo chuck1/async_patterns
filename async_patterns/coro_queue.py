@@ -7,6 +7,10 @@ class CoroQueue(object):
     """
     A queue of coroutines to be called sequentially.
     """
+    
+    __cancelled = False
+    __task_run_forever = None
+
     def __init__(self, loop):
         self.loop = loop
         self.__queue = asyncio.Queue()
@@ -17,15 +21,24 @@ class CoroQueue(object):
         """
         Schedule asyncio to run the consumer loop.
         """
+        assert not self.__task_run_forever
         self.__task_run_forever = self.loop.create_task(self.__run_forever())
 
     async def __run_one(self):
         coro, future = await self.__queue.get()
+        
+        if future.cancelled():
+            print('future cancelled')
+            print(coro)
 
         try:
             res = await coro
+        except concurrent.futures.CancelledError as e:
+            future.set_exception(e)
+            raise
         except Exception as e:
             future.set_exception(e)
+            future.exception()
         else:
             future.set_result(res)
 
@@ -39,6 +52,9 @@ class CoroQueue(object):
                 if self.__queue.empty():
                     self.__waiter.set_result(None)
             
+            if self.__cancelled:
+                break
+
             await self.__run_one()
 
     def put_nowait(self, f, *args, **kwargs):
@@ -48,6 +64,9 @@ class CoroQueue(object):
         :param f: a coroutine function
         :param args: arguments to be passed to the coroutine
         """
+
+        assert not self.__cancelled
+        assert self.__task_run_forever
 
         future = self.loop.create_future()
         coro = f(*args, **kwargs)
@@ -81,7 +100,7 @@ class CoroQueue(object):
                 res = await task
             except concurrent.futures.CancelledError as e:
                 pass
-
+        
     async def join(self):
         """
         Wait for all coroutines to finish.
@@ -143,7 +162,10 @@ class CoroQueueClass:
             self._coro_queue = CoroQueue(self._loop)
             self._coro_queue.schedule_run_forever()
         return self._coro_queue
-    
+
+    def schedule_run_forever(self):
+        self.coro_queue.schedule_run_forever()
+   
     async def close(self):
         await self.coro_queue.close()
     

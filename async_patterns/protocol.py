@@ -44,7 +44,8 @@ class Protocol(asyncio.Protocol):
         try:
             res = await packet(self)
         except concurrent.futures.CancelledError as e:
-            logger.exception('packet call cancelled. packet={} {}'.format(repr(packet), e))
+            logger.warning('packet call cancelled. packet={} {}'.format(repr(packet), e))
+            raise
         except Exception as e:
             logger.exception('error during packet call. {}'.format(e))
         else:
@@ -94,6 +95,11 @@ class Protocol(asyncio.Protocol):
             logger.debug('  task = {}'.format(repr(task)))
 
             task.cancel()
+
+            try:
+                await task
+            except concurrent.futures.CancelledError:
+                pass
 
 
 
