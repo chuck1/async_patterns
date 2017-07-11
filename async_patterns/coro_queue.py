@@ -45,8 +45,10 @@ class CoroQueue(object):
                 if self._cancelled:
                     raise concurrent.futures.CancelledError()
                 else:
-                    raise Exception('future cancelled coro={} loop_running={} cancelled={}'.format(
-                        coro, self.loop.is_running(), self._cancelled))
+                    #raise Exception('future cancelled coro={} loop_running={} cancelled={}'.format(
+                    #    coro, self.loop.is_running(), self._cancelled))
+                    # TODO in pdb self._cancelled evaluates to True here
+                    raise concurrent.futures.CancelledError()
             future.set_result(res)
 
     async def __run_forever(self):
