@@ -26,12 +26,18 @@ class CoroQueue(object):
         self.__task_run_forever = self.loop.create_task(self.__run_forever())
 
     async def __run_one(self):
-        coro, future = await self.__queue.get()
+        args_, future = await self.__queue.get()
         
         if future.cancelled():
             raise concurrent.futures.CancelledError()
             #raise Exception('future cancelled coro={} loop_running={}'.format(
             #    coro, loop.is_running()))
+
+        f, args, kwargs = args_
+
+        coro = f(*args, **kwargs)
+
+        assert asyncio.iscoroutine(coro)
 
         try:
             res = await coro
@@ -79,12 +85,9 @@ class CoroQueue(object):
         assert self.__task_run_forever
 
         future = self.loop.create_future()
-        coro = f(*args, **kwargs)
+        args_ = (f, args, kwargs)
         
-        if not asyncio.iscoroutine(coro):
-            raise RuntimeError('{} is not a coroutine'.format(f))
-        
-        self.__queue.put_nowait((coro, future))
+        self.__queue.put_nowait((args_, future))
 
         return future
 
@@ -101,16 +104,18 @@ class CoroQueue(object):
         
         while not self.__queue.empty():
             item = self.__queue.get_nowait()
-            coro, future = item
+            _, future = item
             
-            task = self.loop.create_task(coro)
+            #task = self.loop.create_task(coro)
 
-            ret = task.cancel()
+            #ret = task.cancel()
             
-            try:
-                res = await task
-            except concurrent.futures.CancelledError as e:
-                pass
+            #try:
+            #    res = await task
+            #except concurrent.futures.CancelledError as e:
+            #    pass
+
+            future.cancel()
         
     async def join(self):
         """
