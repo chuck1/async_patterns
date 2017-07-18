@@ -10,4 +10,7 @@ packages = [
 	'async_patterns.tests'
 ]
 
+classifiers = [
+	'Programming Language :: Python :: 3.6'
+]
 

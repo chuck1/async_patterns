@@ -10,6 +10,8 @@ async_patterns
 .. image:: https://readthedocs.org/projects/async_patterns/badge/?version=latest
    :target: http://async_patterns.readthedocs.io
    :alt: Documentation Status
+.. image:: https://img.shields.io/pypi/pyversions/async_patterns.svg
+   :target: https://pypi.python.org/pypi/async_patterns
 
 Useful python patterns using async.
 
