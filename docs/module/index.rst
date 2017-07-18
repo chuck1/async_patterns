@@ -7,6 +7,7 @@ Reference
 
    callbacks.rst
    coro_queue.rst
+   protocol.rst
 
 .. automodule:: async_patterns
    :members:

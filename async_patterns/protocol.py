@@ -7,6 +7,27 @@ import io
 logger = logging.getLogger(__name__)
 
 class Protocol(asyncio.Protocol):
+    """
+    Derives ``asyncio.Protocol``.
+    Interprets incoming and outgoing data as object instances satisfying the packet protocol (see below).
+    Schedules execution of the packet call function for incoming packets.
+
+    Responses
+    ---------
+    A unique id is added to outgoing packets.
+    A future is also created for each outgoing packet.
+    The receiving end can construct a packet and set the ``response_to`` attribute to this id and send the new packet back to this protocol.
+    This protocol will see the ``response_to`` attribute and assign the response packet as the result of the future.
+
+    packet protocol
+
+    ::
+
+        class Packet:
+            async def __call__(self, protocol):
+                # protocol is this instance
+                pass
+    """
     def __init__(self, loop):
         logger.debug('Protocol created')
         self.loop = loop

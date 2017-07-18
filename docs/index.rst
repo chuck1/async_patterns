@@ -8,6 +8,8 @@ async_patterns
 
    module/index.rst
 
+.. include:: ../README.rst
+
 Indices and tables
 ==================
 
