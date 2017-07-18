@@ -15,6 +15,15 @@ async_patterns
 
 Useful python patterns using async.
 
+The module contains the following submodules:
+- callbacks_
+- coro_queue_
+- protocol_
+
+.. _callbacks: http://async-patterns.readthedocs.io/en/latest/module/callbacks.html
+.. _coro_queue: http://async-patterns.readthedocs.io/en/latest/module/coro_queue.html
+.. _protocol: http://async-patterns.readthedocs.io/en/latest/module/protocol.html
+
 Install
 -------
 
@@ -32,8 +41,8 @@ Test Source
     pip3 install -e .
     pytest
 
-Example
--------
+Examples
+--------
 
 .. testsetup::
 
@@ -43,6 +52,11 @@ Example
     from async_patterns.coro_queue import CoroQueue
 
     loop = asyncio.get_event_loop()
+
+Callbacks
+~~~~~~~~~
+
+Code:
 
 .. testcode::
    
@@ -57,10 +71,14 @@ Example
     
     cb()
 
+Output:
+
 .. testoutput::
 
     1
     2
+
+Code:
 
 .. testcode::
 
@@ -74,11 +92,16 @@ Example
     cb.add_callback(functools.partial(func, 2))
     
     loop.run_until_complete(cb.acall())
-    
+
+Output:
+
 .. testoutput::
 
     1
     2
+
+CoroQueue
+~~~~~~~~~
 
 .. testcode::
 
