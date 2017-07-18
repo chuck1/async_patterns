@@ -13,8 +13,6 @@ async_patterns
 
 Useful python patterns using async.
 
-https://async_patterns.readthedocs.io
-
 Install
 -------
 
