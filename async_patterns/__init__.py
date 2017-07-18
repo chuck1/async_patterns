@@ -1,4 +1,4 @@
-__version__ = '0.3b12'
+__version__ = '0.3b13'
 
 from .callbacks import *
 from .coro_queue import *
