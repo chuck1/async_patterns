@@ -16,6 +16,7 @@ async_patterns
 Useful python patterns using async.
 
 The module contains the following submodules:
+
 - callbacks_
 - coro_queue_
 - protocol_
