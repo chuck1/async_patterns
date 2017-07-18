@@ -6,8 +6,9 @@ __all__ = ['CoroQueue', 'CoroQueueClass']
 class CoroQueue(object):
     """
     A queue of coroutines to be called sequentially.
+
+    :param loop: event loop
     """
-    
     _cancelled = False
     __task_run_forever = None
 
@@ -26,6 +27,9 @@ class CoroQueue(object):
         self.__task_run_forever = self.loop.create_task(self.__run_forever())
 
     async def __run_one(self):
+        """
+        this method is a ``coroutine``.
+        """
         args_, future = await self.__queue.get()
         
         if future.cancelled():
@@ -62,6 +66,8 @@ class CoroQueue(object):
         """
         The consumer loop.
         Loop forever getting the next coroutine in the queue and awaiting it.
+
+        This method is a ``coroutine``.
         """
         while True:
             if self._cancelled:
@@ -94,6 +100,8 @@ class CoroQueue(object):
     async def close(self):
         """
         Cancel all pending coroutines.
+
+        This method is a ``coroutine``.
         """
         assert not self._cancelled
         self._cancelled = True
@@ -121,6 +129,8 @@ class CoroQueue(object):
         """
         Wait for all coroutines to finish.
         Await the underlying :py:class:`asyncio.Queue` object's join method.
+
+        This method is a ``coroutine``.
         """
         assert not self._cancelled
         if self.__queue.empty():
