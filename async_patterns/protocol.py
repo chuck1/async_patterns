@@ -81,7 +81,7 @@ class Protocol(asyncio.Protocol):
         packet._task_acall = task
         self.queue_packet_acall.put_nowait(task)
 
-        if hasattr(packet, 'response_to'):
+        if packet.response_to is not None:
             future = self.__message_futures[packet.response_to]
             future.set_result(packet)
 
@@ -97,9 +97,12 @@ class Protocol(asyncio.Protocol):
         """
         packet.message_id = self.__next_message_id()
         b = pickle.dumps(packet)
+
+        logger.debug(f'transport={self.transport!r}')
+        logger.debug('write {} {} bytes'.format(packet.__class__.__name__, len(b)))
+
         self.transport.write(b)
         
-        logger.debug('write {} {} bytes'.format(packet.__class__.__name__, len(b)))
 
         fut = self.loop.create_future()
         self.__message_futures[packet.message_id] = fut
