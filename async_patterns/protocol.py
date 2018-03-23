@@ -102,7 +102,6 @@ class Protocol(asyncio.Protocol):
         logger.debug('write {} {} bytes'.format(packet.__class__.__name__, len(b)))
 
         self.transport.write(b)
-        
 
         fut = self.loop.create_future()
         self.__message_futures[packet.message_id] = fut

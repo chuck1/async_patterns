@@ -1,9 +1,12 @@
 import asyncio
 import concurrent
+import logging
 
 __all__ = ['CoroQueue', 'CoroQueueClass']
 
-class CoroQueue(object):
+logger = logging.getLogger(__name__)
+
+class CoroQueue:
     """
     A queue of coroutines to be called sequentially.
 
@@ -30,9 +33,12 @@ class CoroQueue(object):
         """
         this method is a ``coroutine``.
         """
+        logger.debug(f'{id(self)} wait for next coro')
+
         args_, future = await self.__queue.get()
         
         if future.cancelled():
+            logger.error('future is cancelled')
             raise concurrent.futures.CancelledError()
             #raise Exception('future cancelled coro={} loop_running={}'.format(
             #    coro, loop.is_running()))
@@ -44,15 +50,19 @@ class CoroQueue(object):
         assert asyncio.iscoroutine(coro)
 
         try:
+            logger.debug(f'{id(self)} await {f} args={args} kwargs={kwargs}')
             res = await coro
         except concurrent.futures.CancelledError as e:
+            logger.error(f'error while running coro: {e!r}')
             future.set_exception(e)
             raise
         except Exception as e:
+            logger.error(f'error while running coro: {e!r}')
             future.set_exception(e)
             future.exception()
         else:
             if future.cancelled():
+                logger.error('future is cancelled')
                 if self._cancelled:
                     raise concurrent.futures.CancelledError()
                 else:
@@ -60,6 +70,8 @@ class CoroQueue(object):
                     #    coro, self.loop.is_running(), self._cancelled))
                     # TODO in pdb self._cancelled evaluates to True here
                     raise concurrent.futures.CancelledError()
+
+            logger.debug('set future result')
             future.set_result(res)
 
     async def __run_forever(self):
@@ -94,6 +106,8 @@ class CoroQueue(object):
         args_ = (f, args, kwargs)
         
         self.__queue.put_nowait((args_, future))
+
+        logger.debug(f'{id(self)} put {f!r}. queue length {self.__queue.qsize()}')
 
         return future
 
