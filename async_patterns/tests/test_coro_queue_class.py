@@ -1,6 +1,5 @@
-
 import asyncio
-
+import pytest
 from async_patterns.coro_queue import *
 
 class Foo(CoroQueueClass):
@@ -16,10 +15,11 @@ class Foo(CoroQueueClass):
     async def c(self, c1, c2=0):
         await asyncio.sleep(1)
 
-async def atest(loop):
+@pytest.mark.asyncio
+async def test(event_loop):
 
     foo = Foo()
-    foo._loop = loop
+    foo._loop = event_loop
 
     await foo.a()
     await foo.b(0)
@@ -29,7 +29,5 @@ async def atest(loop):
 
     await foo.coro_queue.close()
 
-def test(loop):
-    loop.run_until_complete(atest(loop))
 
 

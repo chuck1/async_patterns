@@ -1,6 +1,6 @@
 import asyncio
 from concurrent.futures import CancelledError
-
+import pytest
 import async_patterns.coro_queue
 
 async def a(a1=1):
@@ -28,8 +28,9 @@ async def d():
     await asyncio.sleep(1)
     raise Exception()
 
-async def atest1(loop):
-    q = async_patterns.coro_queue.CoroQueue(loop)
+@pytest.mark.asyncio
+async def test1(event_loop):
+    q = async_patterns.coro_queue.CoroQueue(event_loop)
 
     q.schedule_run_forever()
 
@@ -42,9 +43,10 @@ async def atest1(loop):
 
     await q.close()
 
-async def atest2(loop):
+@pytest.mark.asyncio
+async def test2(event_loop):
 
-    q = async_patterns.coro_queue.CoroQueue(loop)
+    q = async_patterns.coro_queue.CoroQueue(event_loop)
 
     q.schedule_run_forever()
 
@@ -56,15 +58,5 @@ async def atest2(loop):
 
     print('close')
     await q.close()
-
-def test1(loop):
-    print()
-    loop.run_until_complete(atest1(loop))
-    print()
-
-def test2(loop):
-    print()
-    loop.run_until_complete(atest2(loop))
-    print()
 
 

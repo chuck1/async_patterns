@@ -7,3 +7,5 @@ _build/
 .coverage
 .cache/
 coverage.xml
+.pytest_cache/
+env/

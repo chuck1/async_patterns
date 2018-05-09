@@ -1,4 +1,5 @@
 import asyncio
+import pytest
 
 from async_patterns import Callbacks
 
@@ -20,7 +21,8 @@ def test():
 
     assert l == [1, 2]
 
-def test_async(loop):
+@pytest.mark.asyncio
+async def test_async(event_loop):
     cb = Callbacks()
     
     l = []
@@ -34,7 +36,7 @@ def test_async(loop):
     cb.add_callback(func1)
     cb.add_callback(func2)
     
-    loop.run_until_complete(cb.acall())
+    await cb.acall()
 
     assert l == [1, 2]
 
