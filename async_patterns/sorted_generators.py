@@ -32,6 +32,7 @@ class SortedGeneratorIterator:
         return self.__next
 
     def peek_sort_key(self):
+        
         return self.sort_key(self.__next)
 
     def __next__(self):
@@ -51,6 +52,7 @@ class SortedGeneratorIterator:
         return self.peek_sort_key() == other.peek_sort_key()
 
     def __lt__(self, other):
+        if self._stop and other._stop: return False
         if self._stop == other._stop:
             return self.peek_sort_key() < other.peek_sort_key()
         if self._stop:
@@ -59,6 +61,8 @@ class SortedGeneratorIterator:
             return False
 
     def __le__(self, other):
+        if self._stop and other._stop: return True
+
         if self._stop == other._stop:
             return self.peek_sort_key() <= other.peek_sort_key()
         if self._stop:
@@ -67,6 +71,8 @@ class SortedGeneratorIterator:
             return False
 
     def __gt__(self, other):
+        if self._stop and other._stop: return False
+
         if self._stop == other._stop:
             return self.peek_sort_key() > other.peek_sort_key()
         if self._stop:
@@ -75,6 +81,8 @@ class SortedGeneratorIterator:
             return True
         
     def __ge__(self, other):
+        if self._stop and other._stop: return True
+
         if self._stop == other._stop:
             return self.peek_sort_key() >= other.peek_sort_key()
         if self._stop:

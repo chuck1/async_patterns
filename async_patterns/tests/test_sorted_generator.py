@@ -16,4 +16,17 @@ def test_0():
 
     assert(l0 == l1)
 
+def test_1():
+    print()
+
+    generators = [range(0), range(0, 30, 3)]
+
+    s = SortedGenerators(generators, lambda x: x, reverse=True)
+
+    l0 = list(s) 
+
+    l1 = sorted(functools.reduce(operator.add, [list(_) for _ in generators]))
+
+    assert(l0 == l1)
+
 
