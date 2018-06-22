@@ -123,6 +123,7 @@ class SortedGeneratorsIterator:
 class AsyncSortedGenerator:
     def __init__(self, generator, sort_key, reverse=False):
         self.__generator = generator
+        assert hasattr(generator, '__aiter__')
         self.sort_key = sort_key
         self.reverse = reverse
 
